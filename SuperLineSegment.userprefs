@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SegmentScript.cs">
+    <Files>
+      <File FileName="Assets\Scripts\MainGameScript.cs" Line="111" Column="4" />
+      <File FileName="Assets\Scripts\SegmentScript.cs" Line="57" Column="5" />
+      <File FileName="Assets\LevelData\Startpoint.xml" Line="30" Column="16" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

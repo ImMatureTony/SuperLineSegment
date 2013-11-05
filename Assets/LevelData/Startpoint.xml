@@ -1,0 +1,83 @@
+<!-- XML DATA FOR A LEVEL IS A SEQUENCE OF OBSTACLE OBJECTS WHICH CONTAIN THE TIME AT WHICH THEY SHOULD BE SPAWNED (RELATIVE TO THE SPEED SET FOR THE WHOLE GAME) -->
+
+<!--
+	Shapes to work with (thus far):
+		- EasyOval
+		- EasyRect
+		- RoundedRect
+		- EasyTriangle
+		- HardTriangle
+-->
+
+<Level>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>0.4</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>0.475</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>0.55</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>0.625</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyOval</SHAPE>
+		<TIMING>1</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>2</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>RoundedRect</SHAPE>
+		<TIMING>3</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyTriangle</SHAPE>
+		<TIMING>4</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>HardTriangle</SHAPE>
+		<TIMING>5</TIMING>
+		<SIDE>right</SIDE>
+	</OBSTACLE>
+		<OBSTACLE>
+		<SHAPE>EasyOval</SHAPE>
+		<TIMING>1</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyRect</SHAPE>
+		<TIMING>2</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>RoundedRect</SHAPE>
+		<TIMING>3</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>EasyTriangle</SHAPE>
+		<TIMING>4</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+	<OBSTACLE>
+		<SHAPE>HardTriangle</SHAPE>
+		<TIMING>5</TIMING>
+		<SIDE>left</SIDE>
+	</OBSTACLE>
+</Level>
