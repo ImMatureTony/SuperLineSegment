@@ -10,6 +10,7 @@ public class MainGameScript : MonoBehaviour
 	private SegmentScript segment;
 	
 	public GameObject titleText;
+	public GameObject startText;
 	
 	//All the obstacle prefabs should be assigned here.
 	public Transform shapeOval;
@@ -21,12 +22,19 @@ public class MainGameScript : MonoBehaviour
 	public Dictionary<String, Transform> shapeStringToShape;
 	
 	public float gameSpeed;
-	public float gameStartTime;
+	public float gameStartTime = 99999999999999;
 	private float accelerateTime = 0f;
 	public float obstacleSpeedMultiplier;
 	
+	private int startTextFlashTimer = 0;
+	private int startTextFlashFrameCount = 15;
+	
 	public Camera gameCam;
-	public AudioClip poundingMotive;
+	
+	public AudioClip sndGameOver;
+	public AudioClip sndPoundingMotive;
+	public AudioClip sndIntro;
+	public AudioClip sndStart;
 	
 	private struct Obstacle
 	{
@@ -36,6 +44,16 @@ public class MainGameScript : MonoBehaviour
 	}
 	private LinkedList<Obstacle> gameObstacleList = new LinkedList<Obstacle>();
 	private LinkedList<Transform> activeObstacleList = new LinkedList<Transform>();
+	
+	public enum GameState
+	{
+		PRE_INTRO,
+    	INTRO,
+    	GAME_START,
+    	IN_TRANSIT,
+		GAME_OVER
+	}
+	private GameState gameState;
 	
 	// Treat this class as a singleton.  This will hold the instance of the class.
 	private static MainGameScript instance;
@@ -55,7 +73,68 @@ public class MainGameScript : MonoBehaviour
 
 	void Awake()
 	{
-		instance = this; 
+		instance = this;
+	}
+	
+	void TransitionToState(GameState state) {
+		print("transitioning to state: " + state);
+		
+		gameState = state;
+		
+		startText.renderer.enabled = false;
+		titleText.renderer.enabled = false;
+		
+		switch(gameState) {
+			case GameState.PRE_INTRO:
+				// Pre-intro just exists to give things a chance to initialize and time themselves correctly.
+				Invoke("TransitionToNextState", 0.5f);
+				break;
+			case GameState.INTRO:
+				titleText.renderer.enabled = true;
+				audio.clip = sndIntro;
+				audio.Play();
+				// intro naturally times out and becomes waiting for game start
+				Invoke("TransitionToNextState", audio.clip.length);
+				break;
+			case GameState.IN_TRANSIT:
+				gameStartTime = Time.realtimeSinceStartup;
+				audio.clip = sndPoundingMotive;
+				audio.loop = true;
+				audio.Play();
+				break;
+			case GameState.GAME_OVER:
+				break;
+			case GameState.GAME_START:
+				audio.clip = sndStart;
+				audio.loop = false;
+				audio.Play();
+				startText.renderer.enabled = false;
+				startTextFlashTimer = 0;
+				// game start naturally times out and becomes in transit
+				Invoke("TransitionToNextState", audio.clip.length);
+				break;
+			default:
+            	break;
+		}
+	}
+	
+	void TransitionToNextState() {
+		switch(gameState) {
+			case GameState.PRE_INTRO:
+				TransitionToState(GameState.INTRO);
+				break;
+			case GameState.INTRO:
+				TransitionToState(GameState.GAME_START);
+				break;
+			case GameState.IN_TRANSIT:
+				break;
+			case GameState.GAME_OVER:
+				TransitionToState(GameState.GAME_START);
+				break;
+			case GameState.GAME_START:
+				TransitionToState(GameState.IN_TRANSIT);
+				break;
+		}
 	}
 	
 	void Start () 
@@ -69,30 +148,55 @@ public class MainGameScript : MonoBehaviour
 		};
 		
 		ReadInLevelData();
-		
-		AudioSource.PlayClipAtPoint(poundingMotive, new Vector3());
+		TransitionToState(GameState.PRE_INTRO);
 	}
 	
 	void FixedUpdate()
 	{
-		// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
-		if (Input.GetAxis("Fire1") > 0 && Time.realtimeSinceStartup > gameStartTime)
-		{
-			accelerateTime += Time.fixedDeltaTime;	
+		switch(gameState) {
+			case GameState.INTRO:
+				break;
+			case GameState.IN_TRANSIT:
+				// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
+				if (Input.GetAxis("Fire1") > 0)
+				{
+					accelerateTime += Time.fixedDeltaTime;
+				}
+				break;
+			case GameState.GAME_OVER:
+				break;
+			case GameState.GAME_START:
+				if (startTextFlashTimer >= startTextFlashFrameCount) {
+					startText.renderer.enabled = !startText.renderer.enabled;
+					startTextFlashTimer -= startTextFlashFrameCount;
+				}
+				startTextFlashTimer++;
+				break;
+			default:
+            	break;
 		}
 	}
 	
 	void Update()
-	{
-		// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
-		if(Input.GetButtonDown ("Fire1"))
-		{
-			
+	{	
+		switch(gameState) {
+			case GameState.INTRO:
+				break;
+			case GameState.IN_TRANSIT:
+				break;
+			case GameState.GAME_OVER:
+				break;
+			case GameState.GAME_START:
+				// check if start music is done playing, if so, switch to in transit state.
+				if (!audio.isPlaying) {
+					TransitionToState(GameState.IN_TRANSIT);
+				}
+				break;
+			default:
+            	break;
 		}
-		
-		// Hide title text if the game has started
-		if (Time.realtimeSinceStartup >= gameStartTime) {
-			Destroy(titleText);
+		if (gameState.Equals(GameState.INTRO)) {
+
 		}
 		
 		HandleObstacleSpawning();
