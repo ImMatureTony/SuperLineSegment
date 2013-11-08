@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 
+
 public class MainGameScript : MonoBehaviour
 {	
 	private SegmentScript segment;
@@ -22,12 +23,14 @@ public class MainGameScript : MonoBehaviour
 	public Dictionary<String, Transform> shapeStringToShape;
 	
 	public float gameSpeed;
-	public float gameStartTime = 99999999999999;
+	public float gameStartTime;
 	private float accelerateTime = 0f;
-	public float obstacleSpeedMultiplier;
+	private float obstacleDropSpeedMultiplier = 0;
 	
 	private int startTextFlashTimer = 0;
 	private int startTextFlashFrameCount = 15;
+	
+	private bool stationaryObstaclesSpawned = false;
 	
 	public Camera gameCam;
 	
@@ -35,6 +38,8 @@ public class MainGameScript : MonoBehaviour
 	public AudioClip sndPoundingMotive;
 	public AudioClip sndIntro;
 	public AudioClip sndStart;
+	
+	private XmlDocument levelDoc;
 	
 	private struct Obstacle
 	{
@@ -47,8 +52,10 @@ public class MainGameScript : MonoBehaviour
 	
 	public enum GameState
 	{
+		BLANK,
 		PRE_INTRO,
     	INTRO,
+		WAITING_FOR_GAME_START,
     	GAME_START,
     	IN_TRANSIT,
 		GAME_OVER
@@ -76,8 +83,11 @@ public class MainGameScript : MonoBehaviour
 		instance = this;
 	}
 	
-	void TransitionToState(GameState state) {
+	public void TransitionToState(GameState state) {
 		print("transitioning to state: " + state);
+		
+		// don't process it doubly if we're already in that state.
+		if (state == gameState) return;
 		
 		gameState = state;
 		
@@ -87,7 +97,7 @@ public class MainGameScript : MonoBehaviour
 		switch(gameState) {
 			case GameState.PRE_INTRO:
 				// Pre-intro just exists to give things a chance to initialize and time themselves correctly.
-				Invoke("TransitionToNextState", 0.5f);
+				Invoke("TransitionToNextState", 1f);
 				break;
 			case GameState.INTRO:
 				titleText.renderer.enabled = true;
@@ -96,26 +106,44 @@ public class MainGameScript : MonoBehaviour
 				// intro naturally times out and becomes waiting for game start
 				Invoke("TransitionToNextState", audio.clip.length);
 				break;
+			case GameState.WAITING_FOR_GAME_START:
+				ResetLevel();
+				startTextFlashTimer = 0;
+				break;
 			case GameState.IN_TRANSIT:
-				gameStartTime = Time.realtimeSinceStartup;
 				audio.clip = sndPoundingMotive;
 				audio.loop = true;
 				audio.Play();
+				segment.FinishLiving();
 				break;
 			case GameState.GAME_OVER:
+				audio.clip = sndGameOver;
+				audio.loop = false;
+				audio.Play();
+				StopAllObstacles();
+				Invoke("RecedeObstacles", audio.clip.length / 3f);
+				Invoke("FinishSegmentDeath", audio.clip.length / 2f);
+				Invoke("ResetLevel", audio.clip.length);
+				Invoke("TransitionToNextState", audio.clip.length);
+				segment.StartDeath();
 				break;
 			case GameState.GAME_START:
+				gameStartTime = Time.time;
 				audio.clip = sndStart;
 				audio.loop = false;
 				audio.Play();
-				startText.renderer.enabled = false;
-				startTextFlashTimer = 0;
 				// game start naturally times out and becomes in transit
-				Invoke("TransitionToNextState", audio.clip.length);
+				Invoke("TransitionToNextState", audio.clip.length);		
+				ResetLevel();
+				segment.StartLiving();
 				break;
 			default:
             	break;
 		}
+	}
+	
+	void FinishSegmentDeath() {
+		segment.FinishDeath();	
 	}
 	
 	void TransitionToNextState() {
@@ -128,8 +156,11 @@ public class MainGameScript : MonoBehaviour
 				break;
 			case GameState.IN_TRANSIT:
 				break;
-			case GameState.GAME_OVER:
+			case GameState.WAITING_FOR_GAME_START:
 				TransitionToState(GameState.GAME_START);
+				break;
+			case GameState.GAME_OVER:
+				TransitionToState(GameState.WAITING_FOR_GAME_START);
 				break;
 			case GameState.GAME_START:
 				TransitionToState(GameState.IN_TRANSIT);
@@ -147,7 +178,9 @@ public class MainGameScript : MonoBehaviour
 			{ "HardTriangle", shapeHardTriangle}
 		};
 		
-		ReadInLevelData();
+		levelDoc = new XmlDocument();
+		levelDoc.Load("./Assets/LevelData/Startpoint.xml");
+		
 		TransitionToState(GameState.PRE_INTRO);
 	}
 	
@@ -155,6 +188,12 @@ public class MainGameScript : MonoBehaviour
 	{
 		switch(gameState) {
 			case GameState.INTRO:
+				// Check to see if accelerate button is being held down, and if so start the game early.
+				if (Input.GetAxis("Fire1") > 0)
+				{
+					CancelInvoke("TransitionToNextState");
+					TransitionToState(GameState.GAME_START);
+				}
 				break;
 			case GameState.IN_TRANSIT:
 				// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
@@ -162,8 +201,22 @@ public class MainGameScript : MonoBehaviour
 				{
 					accelerateTime += Time.fixedDeltaTime;
 				}
+				HandleObstacleSpawning();
+				HandleObstacleDropping();
 				break;
 			case GameState.GAME_OVER:
+				break;
+			case GameState.WAITING_FOR_GAME_START:
+				if (startTextFlashTimer >= startTextFlashFrameCount) {
+					startText.renderer.enabled = !startText.renderer.enabled;
+					startTextFlashTimer -= startTextFlashFrameCount;
+				}
+				startTextFlashTimer++;
+				// Check to see if accelerate button is being held down, and if so start the game.
+				if (Input.GetAxis("Fire1") > 0)
+				{
+					TransitionToNextState();
+				}
 				break;
 			case GameState.GAME_START:
 				if (startTextFlashTimer >= startTextFlashFrameCount) {
@@ -171,6 +224,8 @@ public class MainGameScript : MonoBehaviour
 					startTextFlashTimer -= startTextFlashFrameCount;
 				}
 				startTextFlashTimer++;
+				HandleObstacleSpawning();
+				HandleObstacleDropping();
 				break;
 			default:
             	break;
@@ -195,30 +250,37 @@ public class MainGameScript : MonoBehaviour
 			default:
             	break;
 		}
-		if (gameState.Equals(GameState.INTRO)) {
-
+	}
+	
+	private void StopAllObstacles() {
+		Vector3 obstacleStopVelocity = new Vector3(0, 0, 0);
+		foreach(Transform obstacle in activeObstacleList) {
+			obstacle.rigidbody.velocity = obstacleStopVelocity;
 		}
-		
-		HandleObstacleSpawning();
-		HandleObstacleDropping();
+		stationaryObstaclesSpawned = false;
 	}
 	
 	private void HandleObstacleDropping() {
-		float userInputSpeedMultiplier = 1f;
-		if (Input.GetAxis("Fire1") > 0)
+		float newObstacleDropSpeedMultiplier = 1f;
+		if (Input.GetAxis("Fire1") > 0 && gameState.Equals(GameState.IN_TRANSIT))
 		{
-			userInputSpeedMultiplier = 2f;
-			print ("YUPPP");
+			newObstacleDropSpeedMultiplier = 2f;
 		}
 		
-		foreach(Transform obstacle in activeObstacleList) {
-			obstacle.Translate(0, userInputSpeedMultiplier * obstacleSpeedMultiplier * Time.deltaTime * gameSpeed * -1, 0);
+		// only if the speed multiplier has changed do we reset the velocities on the obstacles.
+		if ((newObstacleDropSpeedMultiplier != obstacleDropSpeedMultiplier) || stationaryObstaclesSpawned) {
+			obstacleDropSpeedMultiplier = newObstacleDropSpeedMultiplier;
+			Vector3 obstacleVelocity = new Vector3(0, -40 * gameSpeed * obstacleDropSpeedMultiplier, 0);
+			foreach(Transform obstacle in activeObstacleList) {
+				obstacle.rigidbody.velocity = obstacleVelocity;
+			}
+			stationaryObstaclesSpawned = false;
 		}
 	}
 	
 	private void HandleObstacleSpawning()
 	{
-		float timeSinceStart = Time.realtimeSinceStartup - gameStartTime + accelerateTime;
+		float timeSinceStart = Time.time - gameStartTime + accelerateTime;
 		
 		LinkedList<Obstacle> toSpawn = new LinkedList<Obstacle>();
 		
@@ -228,6 +290,7 @@ public class MainGameScript : MonoBehaviour
 				toSpawn.AddLast(obs);
 			}
 		}
+
 		foreach(Obstacle obs in toSpawn) {
 			Vector3 spawnPos = new Vector3(0, 1136, 0);
 			Transform obsTransform = (Transform) Instantiate(shapeStringToShape[obs.shape], spawnPos, Quaternion.identity);
@@ -236,19 +299,36 @@ public class MainGameScript : MonoBehaviour
 				obsTransform.Rotate(new Vector3(0, 180, 0));
 			}
 			activeObstacleList.AddLast(obsTransform);
+			stationaryObstaclesSpawned = true;
 			gameObstacleList.Remove(obs);
 		}
-		
-		
 	}
 	
-	private void ReadInLevelData()
-	{	
-		XmlDocument doc = new XmlDocument();
-		doc.Load("./Assets/LevelData/Startpoint.xml");
+	private void RecedeObstacles() {
+		foreach(Transform obstacle in activeObstacleList) {
+			if (obstacle.position.x <= 320) {
+				// move off to the left.
+				iTween.MoveTo(obstacle.gameObject, iTween.Hash("x", -320, "easeType", iTween.EaseType.easeInOutExpo, "loopType", "none", "delay", UnityEngine.Random.Range(0F, 1F)));
+			} else {
+				// move off to the right.
+				iTween.MoveTo(obstacle.gameObject, iTween.Hash("x", 960, "easeType", iTween.EaseType.easeInOutExpo, "loopType", "none", "delay", UnityEngine.Random.Range(0f, 1f)));
+			}
+		}
+	}
+	
+	private void ResetLevel() {
+		// 1. Clear out the level, destroying any obstacle objects/data leftover from last run.
+		foreach(Transform activeObs in activeObstacleList) {
+			Destroy(activeObs.gameObject);		
+		}
+		activeObstacleList.Clear();
+		gameObstacleList.Clear();
 		
-		// For each Obstacle listed in the level data...
-		foreach(XmlNode node in doc.DocumentElement.ChildNodes){
+		// 2. Reset accelerate time to 0.
+		accelerateTime = 0f;
+		
+		// 3. Fill in the level
+		foreach(XmlNode node in levelDoc.DocumentElement.ChildNodes){
 			Obstacle obstacle = new Obstacle();
 			
 			obstacle.shape = node.SelectSingleNode("SHAPE").InnerText;
@@ -263,4 +343,8 @@ public class MainGameScript : MonoBehaviour
 	{
 		segment = seg;
 	}
+	
+	void OnTriggerEnter(Collider collider) {
+        print("line collided");
+    }
 }

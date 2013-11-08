@@ -14,8 +14,13 @@ public class SegmentScript : MonoBehaviour
 	private float xMin = 0.48f;
 	private float widthMin;
 	
+	private bool shouldOscillate = false;
+	private bool shouldFlash = false;
+	
 	private Transform colliderTransform;
-
+	
+	private float lineStartTime = 0;
+	
 	public Transform ColliderTransform
 	{
 		get
@@ -41,18 +46,51 @@ public class SegmentScript : MonoBehaviour
 		
 		// Register Segment with the main game script.
 		MainGameScript.Instance.RegisterSegment(this);
+		
+		sprite.renderer.enabled = false;
+	}
+	
+	public void StartDeath() {
+		shouldOscillate = false;
+		shouldFlash = true;
+	}
+	
+	public void FinishDeath() {
+		shouldFlash = false;
+		sprite.renderer.enabled = false;
+		spriteRec.x = xMin;
+		spriteRec.width = xMin + widthMin - spriteRec.x;
+		sprite.ClipRect = spriteRec;
+	}
+	
+	public void StartLiving() {
+		shouldFlash = true;
+		sprite.renderer.enabled = true;
+		iTween.MoveFrom(gameObject, iTween.Hash("y", -4, "easeType", iTween.EaseType.easeOutCirc, "time", 2f));
+	}
+	
+	public void FinishLiving() {
+		shouldFlash = false;
+		sprite.renderer.enabled = true;
+		sprite.color = new Color(0f, 0f, 0f, 1f);
+		shouldOscillate = true;
+		lineStartTime = Time.time;
 	}
 	
 	// Main loop for the sprite.  Unclip the right side, snap back, unclip the left side, snap back, repeat. Like a strange horizontally bunjee jumping pendulum. Sinusoidal.
 	void Update()
 	{
-		// TODO: CHANGE ALL TIMING TO BE RELATIVE TO SONG TIME ELAPSED, SEE IF CAN PULL THAT INFORMATION.
+		if (shouldFlash) {
+			Color color = new Color(Random.Range(0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
+			sprite.color = color;
+		}
 		
-		if (Time.realtimeSinceStartup < MainGameScript.Instance.gameStartTime) {
+		// TODO: CHANGE ALL TIMING TO BE RELATIVE TO SONG TIME ELAPSED, SEE IF CAN PULL THAT INFORMATION.		
+		if (Time.time < lineStartTime || !shouldOscillate) {
 			return;
 		}
 		
-		timeSinceStart = Time.realtimeSinceStartup - MainGameScript.Instance.gameStartTime;
+		timeSinceStart = Time.time - lineStartTime;
 		
 /**/		// Get the x-coordinate for the endpoint stretching out from the center if the rightmost point is seen as 1 and the leftmost point seen as 0.
 		float endpointRoughXPos = Mathf.Abs(Mathf.Cos(timeSinceStart * MainGameScript.Instance.gameSpeed)) / 2;
@@ -83,18 +121,5 @@ public class SegmentScript : MonoBehaviour
 */				
 		sprite.ClipRect = spriteRec;
 	}
-	
-	// Segment collides with environment
-	public void Engulf()
-	{
-		engulfed = true;
-	}
-	
-	public bool Engulfed
-	{
-		get
-		{
-			return engulfed;	
-		}
-	}
+
 }
