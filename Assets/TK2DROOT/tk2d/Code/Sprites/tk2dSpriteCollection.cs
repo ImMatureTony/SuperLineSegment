@@ -417,7 +417,7 @@ public class tk2dSpriteSheetSource
 public class tk2dSpriteCollectionFont
 {
 	public bool active = false;
-	public Object bmFont;
+	public TextAsset bmFont;
 	public Texture2D texture;
     public bool dupeCaps = false; // duplicate lowercase into uc, or vice-versa, depending on which exists
 	public bool flipTextureY = false;

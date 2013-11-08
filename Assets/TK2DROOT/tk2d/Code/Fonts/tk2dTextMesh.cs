@@ -456,7 +456,7 @@ public class tk2dTextMesh : MonoBehaviour, tk2dRuntime.ISpriteCollectionForceBui
 		return numChars;
 	}
 
-	[System.Obsolete]
+	[System.Obsolete("Use GetEstimatedMeshBoundsForString().size instead")]
 	public Vector2 GetMeshDimensionsForString(string str) {
 		return tk2dTextGeomGen.GetMeshDimensionsForString(str, tk2dTextGeomGen.Data( data, _fontInst, _formattedText ));
 	}

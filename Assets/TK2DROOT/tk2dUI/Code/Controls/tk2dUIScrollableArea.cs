@@ -171,6 +171,14 @@ public class tk2dUIScrollableArea : MonoBehaviour
                 percent = value;
                 if (OnScroll != null) { OnScroll(this); }
 
+                if (isBackgroundButtonDown || isSwipeScrollingInProgress) {
+                    if (tk2dUIManager.Instance__NoCreate != null) {
+                        tk2dUIManager.Instance.OnInputUpdate -= BackgroundOverUpdate;
+                    }
+                    isBackgroundButtonDown = false;
+                    isSwipeScrollingInProgress = false;
+                }
+
                 TargetOnScrollCallback();
             }
             if (scrollBar != null) { scrollBar.SetScrollPercentWithoutEvent(percent); }

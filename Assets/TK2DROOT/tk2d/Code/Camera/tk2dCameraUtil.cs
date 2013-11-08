@@ -26,6 +26,7 @@ public class tk2dCameraSettings {
 	public float orthographicPixelsPerMeter = 20;
 	public OrthographicOrigin orthographicOrigin = OrthographicOrigin.Center;
 	public OrthographicType orthographicType = OrthographicType.PixelsPerMeter;
+	public TransparencySortMode transparencySortMode = TransparencySortMode.Default;
 	public float fieldOfView = 60.0f;
 	public Rect rect = new Rect( 0, 0, 1, 1 );
 }

@@ -574,7 +574,7 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 			// This warning is not applicable in the editor
 			if (Application.isPlaying)
 			{
-				Debug.LogError("Invalid mesh collider on sprite, please remove and try again.");
+				Debug.LogError("Invalid mesh collider on sprite '" + name + "', please remove and try again.");
 			}
 		}
 		

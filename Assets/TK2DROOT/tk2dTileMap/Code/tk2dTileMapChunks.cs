@@ -44,9 +44,10 @@ namespace tk2dRuntime.TileMap
 		{
 			if (mesh != null) tileMap.DestroyMesh(mesh);
 			if (gameObject != null) GameObject.DestroyImmediate(gameObject);
+
 			gameObject = null;
 			mesh = null;
-			
+
 			DestroyColliderData(tileMap);
 		}
 		
@@ -378,6 +379,15 @@ namespace tk2dRuntime.TileMap
 				CreateChunk(chunk);
 				chunk.spriteIds[offset] = value;
 				chunk.Dirty = true;
+			}
+		}
+
+		public void DestroyGameData(tk2dTileMap tilemap) {
+			foreach (SpriteChunk sc in spriteChannel.chunks) {
+				if (sc.HasGameData) {
+					sc.DestroyColliderData(tilemap);
+					sc.DestroyGameData(tilemap);
+				}
 			}
 		}
 

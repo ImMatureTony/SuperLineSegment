@@ -14,6 +14,8 @@ public class tk2dClippedSprite : tk2dBaseSprite
 	Vector2[] meshUvs;
 	Vector3[] meshVertices;
 	Color32[] meshColors;
+	Vector3[] meshNormals = null;
+	Vector4[] meshTangents = null;
 	int[] meshIndices;
 	
 	public Vector2 _clipBottomLeft = new Vector2(0, 0);
@@ -145,9 +147,13 @@ public class tk2dClippedSprite : tk2dBaseSprite
 		float colliderOffsetZ = ( boxCollider != null ) ? ( boxCollider.center.z ) : 0.0f;
 		float colliderExtentZ = ( boxCollider != null ) ? ( boxCollider.size.z * 0.5f ) : 0.5f;
 		tk2dSpriteGeomGen.SetClippedSpriteGeom( meshVertices, meshUvs, 0, out boundsCenter, out boundsExtents, sprite, _scale, _clipBottomLeft, _clipTopRight, colliderOffsetZ, colliderExtentZ );
+
+		if (meshNormals.Length > 0 || meshTangents.Length > 0) {
+			tk2dSpriteGeomGen.SetSpriteVertexNormals(meshVertices, meshVertices[0], meshVertices[3], sprite.normals, sprite.tangents, meshNormals, meshTangents);
+		}
 		
 		// Only do this when there are exactly 4 polys to a sprite (i.e. the sprite isn't diced, and isnt a more complex mesh)
-		if (sprite.positions.Length != 4)
+		if (sprite.positions.Length != 4 || sprite.complexGeometry)
 		{
 			// Only supports normal sprites
 			for (int i = 0; i < vertices.Length; ++i)
@@ -157,9 +163,19 @@ public class tk2dClippedSprite : tk2dBaseSprite
 
 	public override void Build()
 	{
+		var spriteDef = CurrentSprite;
+
 		meshUvs = new Vector2[4];
 		meshVertices = new Vector3[4];
 		meshColors = new Color32[4];
+		meshNormals = new Vector3[0];
+		meshTangents = new Vector4[0];
+		if (spriteDef.normals != null && spriteDef.normals.Length > 0) {
+			meshNormals = new Vector3[4];
+		}
+		if (spriteDef.tangents != null && spriteDef.tangents.Length > 0) {
+			meshTangents = new Vector4[4];
+		}
 		
 		SetGeometry(meshVertices, meshUvs);
 		SetColors(meshColors);
@@ -177,6 +193,8 @@ public class tk2dClippedSprite : tk2dBaseSprite
 		mesh.vertices = meshVertices;
 		mesh.colors32 = meshColors;
 		mesh.uv = meshUvs;
+		mesh.normals = meshNormals;
+		mesh.tangents = meshTangents;
 
 		int[] indices = new int[6];
 		tk2dSpriteGeomGen.SetClippedSpriteIndices(indices, 0, 0, CurrentSprite);
@@ -221,6 +239,8 @@ public class tk2dClippedSprite : tk2dBaseSprite
 			SetGeometry(meshVertices, meshUvs);
 			mesh.vertices = meshVertices;
 			mesh.uv = meshUvs;
+			mesh.normals = meshNormals;
+			mesh.tangents = meshTangents;
 			mesh.RecalculateBounds();
 			mesh.bounds = AdjustedMeshBounds( mesh.bounds, renderLayer );
 		}
@@ -230,25 +250,10 @@ public class tk2dClippedSprite : tk2dBaseSprite
 	protected override void UpdateCollider()
 	{
 		if (CreateBoxCollider) {
-			if (boxCollider == null) {
-				boxCollider = GetComponent<BoxCollider>();
-				if (boxCollider == null) {
-					boxCollider = gameObject.AddComponent<BoxCollider>();
-				}
-			}
-			boxCollider.size = 2 * boundsExtents;
-			boxCollider.center = boundsCenter;
-		} else {
-#if UNITY_EDITOR
-			boxCollider = GetComponent<BoxCollider>();
 			if (boxCollider != null) {
-				DestroyImmediate(boxCollider);
+				boxCollider.size = 2 * boundsExtents;
+				boxCollider.center = boundsCenter;
 			}
-#else
-			if (boxCollider != null) {
-				Destroy(boxCollider);
-			}
-#endif
 		}
 	}
 

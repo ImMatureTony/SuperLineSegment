@@ -257,6 +257,12 @@ public class tk2dCamera : MonoBehaviour
 		if (allCameras.IndexOf(this) == -1) {
 			allCameras.Add(this);
 		}
+
+		tk2dCamera settings = SettingsRoot;
+		tk2dCameraSettings inheritedCameraSettings = settings.CameraSettings;
+		if (inheritedCameraSettings.projection == tk2dCameraSettings.ProjectionType.Perspective) {
+			UnityCamera.transparencySortMode = inheritedCameraSettings.transparencySortMode;
+		}
 	}
 
 	void OnEnable() {
