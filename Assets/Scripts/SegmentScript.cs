@@ -92,7 +92,7 @@ public class SegmentScript : MonoBehaviour
 		
 		timeSinceStart = Time.time - lineStartTime;
 		
-/**/		// Get the x-coordinate for the endpoint stretching out from the center if the rightmost point is seen as 1 and the leftmost point seen as 0.
+/*		// Get the x-coordinate for the endpoint stretching out from the center if the rightmost point is seen as 1 and the leftmost point seen as 0.
 		float endpointRoughXPos = Mathf.Abs(Mathf.Cos(timeSinceStart * MainGameScript.Instance.gameSpeed)) / 2;
 				
 		// See if we're at an even half-period, if so, we're going to the right, otherwise left.
@@ -108,8 +108,8 @@ public class SegmentScript : MonoBehaviour
 			spriteRec.x = Mathf.Min(xMin, endpointRoughXPos);
 			spriteRec.width = xMin + widthMin - spriteRec.x;
 		}
+*/
 /**/
-/*
 		float endpointRoughXPos = (Mathf.Sin(timeSinceStart * MainGameScript.Instance.gameSpeed) + 1) / 2;
 		if (endpointRoughXPos > 0.5) {
 			spriteRec.x = xMin;
@@ -118,7 +118,7 @@ public class SegmentScript : MonoBehaviour
 			spriteRec.x = Mathf.Min(xMin, endpointRoughXPos);
 			spriteRec.width = xMin + widthMin - spriteRec.x;
 		}
-*/				
+/**/				
 		sprite.ClipRect = spriteRec;
 	}
 

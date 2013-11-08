@@ -14,7 +14,6 @@ public class SegmentTriggerScript : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider collider) {
-    	print("COLLISION");
 		MainGameScript.Instance.TransitionToState(MainGameScript.GameState.GAME_OVER);
     }
 }

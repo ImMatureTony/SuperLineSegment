@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
-
+using System.IO;
 
 public class MainGameScript : MonoBehaviour
 {	
@@ -39,7 +39,7 @@ public class MainGameScript : MonoBehaviour
 	public AudioClip sndIntro;
 	public AudioClip sndStart;
 	
-	private XmlDocument levelDoc;
+	private XmlDocument[] obstacleDocuments;
 	
 	private struct Obstacle
 	{
@@ -84,7 +84,7 @@ public class MainGameScript : MonoBehaviour
 	}
 	
 	public void TransitionToState(GameState state) {
-		print("transitioning to state: " + state);
+		Debug.Log("transitioning to state: " + state);
 		
 		// don't process it doubly if we're already in that state.
 		if (state == gameState) return;
@@ -108,6 +108,7 @@ public class MainGameScript : MonoBehaviour
 				break;
 			case GameState.WAITING_FOR_GAME_START:
 				ResetLevel();
+				iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", 0, "easeType", iTween.EaseType.linear));
 				startTextFlashTimer = 0;
 				break;
 			case GameState.IN_TRANSIT:
@@ -117,6 +118,7 @@ public class MainGameScript : MonoBehaviour
 				segment.FinishLiving();
 				break;
 			case GameState.GAME_OVER:
+				iTween.Stop();
 				audio.clip = sndGameOver;
 				audio.loop = false;
 				audio.Play();
@@ -178,8 +180,15 @@ public class MainGameScript : MonoBehaviour
 			{ "HardTriangle", shapeHardTriangle}
 		};
 		
-		levelDoc = new XmlDocument();
-		levelDoc.Load("./Assets/LevelData/Startpoint.xml");
+		// read in obstacle data.
+		XmlDocument obstaclesEasyDoc = new XmlDocument();
+		obstaclesEasyDoc.LoadXml(ObstacleData.easyObstacles);
+		XmlDocument obstaclesMediumDoc = new XmlDocument();
+		obstaclesMediumDoc.LoadXml(ObstacleData.mediumObstacles);
+		XmlDocument obstaclesHardDoc = new XmlDocument();
+		obstaclesHardDoc.LoadXml(ObstacleData.hardObstacles);
+		
+		obstacleDocuments = new XmlDocument[]{obstaclesEasyDoc, obstaclesMediumDoc, obstaclesHardDoc};
 		
 		TransitionToState(GameState.PRE_INTRO);
 	}
@@ -197,10 +206,16 @@ public class MainGameScript : MonoBehaviour
 				break;
 			case GameState.IN_TRANSIT:
 				// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
-				if (Input.GetAxis("Fire1") > 0)
-				{
+				if (Input.GetAxis("Fire1") > 0) {
 					accelerateTime += Time.fixedDeltaTime;
+					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", -100, "easeType", iTween.EaseType.linear));
+				} else if (Input.GetAxis ("Fire2") > 0) {
+					accelerateTime -= Time.fixedDeltaTime / 2f;
+					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", 100, "easeType", iTween.EaseType.linear));
+				} else {
+					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", 0, "easeType", iTween.EaseType.linear));
 				}
+			
 				HandleObstacleSpawning();
 				HandleObstacleDropping();
 				break;
@@ -255,6 +270,8 @@ public class MainGameScript : MonoBehaviour
 	private void StopAllObstacles() {
 		Vector3 obstacleStopVelocity = new Vector3(0, 0, 0);
 		foreach(Transform obstacle in activeObstacleList) {
+			// HACKY: undo whatever translation happened in this frame? hmm....
+			obstacle.Translate(new Vector3(0, -1 / 30 * obstacle.rigidbody.velocity.y, 0));
 			obstacle.rigidbody.velocity = obstacleStopVelocity;
 		}
 		stationaryObstaclesSpawned = false;
@@ -265,6 +282,9 @@ public class MainGameScript : MonoBehaviour
 		if (Input.GetAxis("Fire1") > 0 && gameState.Equals(GameState.IN_TRANSIT))
 		{
 			newObstacleDropSpeedMultiplier = 2f;
+		} else if (Input.GetAxis("Fire2") > 0 && gameState.Equals(GameState.IN_TRANSIT))
+		{
+			newObstacleDropSpeedMultiplier = 0.5f;	
 		}
 		
 		// only if the speed multiplier has changed do we reset the velocities on the obstacles.
@@ -284,6 +304,24 @@ public class MainGameScript : MonoBehaviour
 		
 		LinkedList<Obstacle> toSpawn = new LinkedList<Obstacle>();
 		
+		
+		if (gameObstacleList.Count == 0) {
+			// If we're out of obstacles to spawn, add a new chunk to the list, every 50 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
+			int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(obstacleDocuments.Length, Math.Ceiling(timeSinceStart / 50)));
+			Debug.Log (chunkDifficulty);
+			XmlNode chunkDoc = obstacleDocuments[chunkDifficulty];
+			XmlNode chunkToSpawn = chunkDoc.FirstChild.SelectNodes("CHUNK")[UnityEngine.Random.Range(0, chunkDoc.FirstChild.SelectNodes("CHUNK").Count)];
+			foreach(XmlNode node in chunkToSpawn){
+				Obstacle obstacle = new Obstacle();
+				
+				obstacle.shape = node.SelectSingleNode("SHAPE").InnerText;
+				obstacle.timing = timeSinceStart / gameSpeed + Convert.ToSingle(node.SelectSingleNode("TIMING").InnerText);
+				obstacle.side = node.SelectSingleNode("SIDE").InnerText;
+			
+				gameObstacleList.AddLast(obstacle);
+			}	
+		}
+		
 		// For now, loop through every obstacle on every frame, probably change this later (unless no performance problems are found...)
 		foreach(Obstacle obs in gameObstacleList) {
 			if (obs.timing <= (timeSinceStart / gameSpeed)) {
@@ -292,14 +330,16 @@ public class MainGameScript : MonoBehaviour
 		}
 
 		foreach(Obstacle obs in toSpawn) {
-			Vector3 spawnPos = new Vector3(0, 1136, 0);
-			Transform obsTransform = (Transform) Instantiate(shapeStringToShape[obs.shape], spawnPos, Quaternion.identity);
-			if (obs.side.Equals("right")) {
-				obsTransform.Translate(new Vector3(640, 0, 0));
-				obsTransform.Rotate(new Vector3(0, 180, 0));
+			if (!obs.shape.Equals("EndPiece")) {
+				Vector3 spawnPos = new Vector3(-1, 1136, 0);
+				Transform obsTransform = (Transform) Instantiate(shapeStringToShape[obs.shape], spawnPos, Quaternion.identity);
+				if (obs.side.Equals("right")) {
+					obsTransform.Translate(new Vector3(641, 0, 0));
+					obsTransform.Rotate(new Vector3(0, 180, 0));
+				}
+				activeObstacleList.AddLast(obsTransform);
+				stationaryObstaclesSpawned = true;
 			}
-			activeObstacleList.AddLast(obsTransform);
-			stationaryObstaclesSpawned = true;
 			gameObstacleList.Remove(obs);
 		}
 	}
@@ -326,25 +366,10 @@ public class MainGameScript : MonoBehaviour
 		
 		// 2. Reset accelerate time to 0.
 		accelerateTime = 0f;
-		
-		// 3. Fill in the level
-		foreach(XmlNode node in levelDoc.DocumentElement.ChildNodes){
-			Obstacle obstacle = new Obstacle();
-			
-			obstacle.shape = node.SelectSingleNode("SHAPE").InnerText;
-			obstacle.timing = Convert.ToSingle(node.SelectSingleNode("TIMING").InnerText);
-			obstacle.side = node.SelectSingleNode("SIDE").InnerText;
-			
-			gameObstacleList.AddLast(obstacle);
-		}	
 	}
 	
 	public void RegisterSegment(SegmentScript seg)
 	{
 		segment = seg;
 	}
-	
-	void OnTriggerEnter(Collider collider) {
-        print("line collided");
-    }
 }
