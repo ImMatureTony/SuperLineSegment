@@ -5,7 +5,12 @@ using System;
 static class ObstacleData
 {
 	public static String easyObstacles =
-		@"<CHUNKS> 
+		@"<CHUNKS>
+
+
+
+			<!-- 3 Horizontal Lines -->
+
 			<CHUNK>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
@@ -23,51 +28,47 @@ static class ObstacleData
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.3</TIMING>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.4</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.5</TIMING>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.6</TIMING>
+					<TIMING>0.3</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
-			
+
+
+
+			<!-- 45 degree tri-line -->
+
 			<CHUNK>
 				<OBSTACLE>
-					<SHAPE>EasyTriangle</SHAPE>
+					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0</TIMING>
+					<ROTATION>40</ROTATION>
+					<X_TWEAK>-12</X_TWEAK>
+					<Y_TWEAK>0</Y_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
-					<SHAPE>EasyTriangle</SHAPE>
-					<TIMING>0.1</TIMING>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyTriangle</SHAPE>
-					<TIMING>0.2</TIMING>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.02</TIMING>
+					<ROTATION>40</ROTATION>
+					<X_TWEAK>-12</X_TWEAK>
+					<Y_TWEAK>0</Y_TWEAK>
+					<X_SCALE>0.75</X_SCALE>
+					<Y_SCALE>1</Y_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
-					<SHAPE>EasyTriangle</SHAPE>
-					<TIMING>0.3</TIMING>
-					<SIDE>right</SIDE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.04</TIMING>
+					<ROTATION>40</ROTATION>
+					<X_TWEAK>-12</X_TWEAK>
+					<Y_TWEAK>0</Y_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
+					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.4</TIMING>
+					<TIMING>0.09</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
