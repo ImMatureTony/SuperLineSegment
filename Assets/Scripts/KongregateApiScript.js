@@ -11,7 +11,7 @@ var userId = 0;
 static var username = "Guest";
 var gameAuthToken = "";
  
-function OnKongregateAPILoaded(userInfoString){
+function OnKongregateAPILoaded(userInfoString) {
   // We now know we're on Kongregate
   isKongregate = true;
   Debug.Log("ON KONG");
@@ -24,15 +24,14 @@ function OnKongregateAPILoaded(userInfoString){
 }
  
  
-function Awake()
-    {
+function Awake() {
     // This game object needs to survive multiple levels
     DontDestroyOnLoad (this);
  
     // Begin the API loading process if it is available
-Application.ExternalEval(
-  "if(typeof(kongregateUnitySupport) != 'undefined'){" +
-  " kongregateUnitySupport.initAPI('KongregateAPI', 'OnKongregateAPILoaded');" +
-  "}"
-);
-    }
+	Application.ExternalEval(
+ 		 "if(typeof(kongregateUnitySupport) != 'undefined'){" +
+ 		 " kongregateUnitySupport.initAPI('KongregateAPI', 'OnKongregateAPILoaded');" +
+ 		 "}"
+	);
+}

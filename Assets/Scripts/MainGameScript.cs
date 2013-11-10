@@ -177,6 +177,7 @@ public class MainGameScript : MonoBehaviour
 				segment.FinishLiving();
 				break;
 			case GameState.GAME_OVER:
+				Application.ExternalCall("kongregate.stats.submit", "high_score", (int) (ScoreScript.Score * 100));
 				haveHadAGameOver = true;
 				currentStartTextMessageIndex = 0;
 				iTween.Stop();
