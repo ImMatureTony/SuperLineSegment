@@ -57,6 +57,7 @@ public class MainGameScript : MonoBehaviour
 	private LinkedList<Transform> activeObstacleList = new LinkedList<Transform>();
 	
 	private List<List<Obstacle>> easyChunks = new List<List<Obstacle>>();
+	private List<List<Obstacle>> lesserMediumChunks = new List<List<Obstacle>>();
 	private List<List<Obstacle>> mediumChunks = new List<List<Obstacle>>();	
 	private List<List<Obstacle>> hardChunks = new List<List<Obstacle>>();
 	
@@ -200,6 +201,7 @@ public class MainGameScript : MonoBehaviour
 		obstaclesHardDoc.LoadXml(ObstacleData.hardObstacles);
 		
 		FillChunkListFromXml(easyChunks, ObstacleData.easyObstacles);
+		FillChunkListFromXml(lesserMediumChunks, ObstacleData.lesserMediumObstacles);
 		FillChunkListFromXml(mediumChunks, ObstacleData.mediumObstacles);
 		FillChunkListFromXml(hardChunks, ObstacleData.hardObstacles);
 		
@@ -383,15 +385,17 @@ public class MainGameScript : MonoBehaviour
 	private void AddNewChunkToSpawnList() {
 //		Benchy.Begin();
 		
-		// If we're out of obstacles to spawn, add a new chunk to the list, every 50 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
-		// up the difficulty every 50 seconds?
-		int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(3, Math.Ceiling(TimeSinceStart() / 50)));
+		// If we're out of obstacles to spawn, add a new chunk to the list, every 30 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
+		// up the difficulty every 30 seconds?
+		int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(2, Math.Ceiling(TimeSinceStart() / 5)));
 		List<List<Obstacle>> chunksForSelectedDifficulty = null;
 		if (chunkDifficulty == 0) {
 			chunksForSelectedDifficulty = easyChunks;	
 		} else if (chunkDifficulty == 1) {
-			chunksForSelectedDifficulty = mediumChunks;	
+			chunksForSelectedDifficulty = lesserMediumChunks;
 		} else if (chunkDifficulty == 2) {
+			chunksForSelectedDifficulty = mediumChunks;	
+		} else if (chunkDifficulty == 3) {
 			chunksForSelectedDifficulty = hardChunks;	
 		}
 		
@@ -443,17 +447,18 @@ public class MainGameScript : MonoBehaviour
 		
 		foreach(Obstacle obs in toSpawn) {
 			if (!obs.shape.Equals("EndPiece")) {
-				Vector3 spawnPos = new Vector3(-1, 1250, 0);
+				Vector3 spawnPos = new Vector3(-1, 1248, 0);
 				Transform obsTransform = (Transform) Instantiate(shapeStringToShape[obs.shape], spawnPos, Quaternion.identity);
 				if (obs.side.Equals("right")) {
 					obsTransform.Translate(new Vector3(642, 0, 0));
 					obsTransform.Rotate(new Vector3(0, 180, 0));
 				}
 				
-				float additionalYTweak = currentVelocity * (timingCompareValue - obs.timing) * gameSpeed * 0.5f;
-
-				obsTransform.Translate(obs.xTweak, additionalYTweak + obs.yTweak, 0);
+				float worldScaleYTweak = currentVelocity * (timingCompareValue - obs.timing) * gameSpeed * 0.5f;
+				obsTransform.Translate(0, worldScaleYTweak, 0);
+				
 				obsTransform.Rotate(0, 0, -1 * obs.rotation);
+				obsTransform.Translate(obs.xTweak, obs.yTweak, 0);
 				activeObstacleList.AddLast(obsTransform);
 
 				int tweenX = 300;
