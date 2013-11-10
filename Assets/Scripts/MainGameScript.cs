@@ -60,13 +60,14 @@ public class MainGameScript : MonoBehaviour
 		public float rotation;
 		public float xTweak;
 		public float yTweak;
+		public float xScale;
+		public float yScale;
     	public string side;
 	}
 	private LinkedList<Obstacle> gameObstacleList = new LinkedList<Obstacle>();
 	private LinkedList<Transform> activeObstacleList = new LinkedList<Transform>();
 	
 	private List<List<Obstacle>> easyChunks = new List<List<Obstacle>>();
-	private List<List<Obstacle>> lesserMediumChunks = new List<List<Obstacle>>();
 	private List<List<Obstacle>> mediumChunks = new List<List<Obstacle>>();	
 	private List<List<Obstacle>> hardChunks = new List<List<Obstacle>>();
 	
@@ -269,7 +270,6 @@ public class MainGameScript : MonoBehaviour
 		obstaclesHardDoc.LoadXml(ObstacleData.hardObstacles);
 		
 		FillChunkListFromXml(easyChunks, ObstacleData.easyObstacles);
-		FillChunkListFromXml(lesserMediumChunks, ObstacleData.lesserMediumObstacles);
 		FillChunkListFromXml(mediumChunks, ObstacleData.mediumObstacles);
 		FillChunkListFromXml(hardChunks, ObstacleData.hardObstacles);
 		
@@ -308,6 +308,20 @@ public class MainGameScript : MonoBehaviour
 					obstacle.yTweak = Convert.ToSingle(yTweakNode.InnerText);	
 				} else {
 					obstacle.yTweak = 0;	
+				}
+				
+				XmlNode xScaleNode = node.SelectSingleNode("X_SCALE");
+				if (xScaleNode != null) {
+					obstacle.xScale = Convert.ToSingle(xScaleNode.InnerText);	
+				} else {
+					obstacle.xScale = 1;	
+				}
+				
+				XmlNode yScaleNode = node.SelectSingleNode("Y_SCALE");
+				if (yScaleNode != null) {
+					obstacle.yScale = Convert.ToSingle(yScaleNode.InnerText);	
+				} else {
+					obstacle.yScale = 1;	
 				}
 				
 				if (node.SelectSingleNode("SIDE").InnerText.Equals("left")) {
@@ -420,9 +434,9 @@ public class MainGameScript : MonoBehaviour
 	}
 	
 	private void HandleObstacles() {
+		HandleObstacleSpawning();
 		HandleObstacleDropping();
 		HandleObstaclePruning();
-		HandleObstacleSpawning();
 	}
 	
 	private void HandleObstacleDropping() {
@@ -476,10 +490,8 @@ public class MainGameScript : MonoBehaviour
 		if (chunkDifficulty == 0) {
 			chunksForSelectedDifficulty = easyChunks;	
 		} else if (chunkDifficulty == 1) {
-			chunksForSelectedDifficulty = lesserMediumChunks;
-		} else if (chunkDifficulty == 2) {
 			chunksForSelectedDifficulty = mediumChunks;	
-		} else if (chunkDifficulty == 3) {
+		} else if (chunkDifficulty == 2) {
 			chunksForSelectedDifficulty = hardChunks;	
 		}
 		
@@ -488,7 +500,7 @@ public class MainGameScript : MonoBehaviour
 		for(int i = 0; i < chunkToSpawn.Count; i++) {
 			Obstacle node = chunkToSpawn[i];
 			
-			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f;
+			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f + 1.2f * (1 - obstacleDropSpeedMultiplier) * Time.fixedDeltaTime / gameSpeed;
 			
 			if (oughtToMirrorChunk) {
 				if (node.side == "left") {
@@ -543,6 +555,9 @@ public class MainGameScript : MonoBehaviour
 				
 				obsTransform.Rotate(0, 0, -1 * obs.rotation);
 				obsTransform.Translate(obs.xTweak, obs.yTweak, 0);
+				if (obs.xScale != 1 || obs.yScale != 1) {
+					obsTransform.localScale = new Vector3(obs.xScale, obs.yScale, 1);
+				}
 				activeObstacleList.AddLast(obsTransform);
 
 				int tweenX = 300;

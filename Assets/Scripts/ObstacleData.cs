@@ -99,6 +99,11 @@ static class ObstacleData
 					<TIMING>0.224</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<SIDE>left</SIDE>
+					<TIMING>0.232</TIMING>
+				</OBSTACLE>
 			</CHUNK>
 
 			<!-- Easier Slalom -->
@@ -199,6 +204,11 @@ static class ObstacleData
 					<TIMING>0.24</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<SIDE>left</SIDE>
+					<TIMING>0.248</TIMING>
+				</OBSTACLE>
 			</CHUNK>
 
 			<!-- Easy Slalom -->
@@ -298,6 +308,11 @@ static class ObstacleData
 					<X_TWEAK>-240</X_TWEAK>
 					<TIMING>0.24</TIMING>
 					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<SIDE>left</SIDE>
+					<TIMING>0.248</TIMING>
 				</OBSTACLE>
 			</CHUNK>
 
@@ -520,27 +535,33 @@ static class ObstacleData
 			</CHUNK>
 
 
-			<!-- 3 Horizontal Lines (Easy) -->
+			<!-- 5 Horizontal Lines (Easy) -->
 
 			<CHUNK>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.09</TIMING>
+					<TIMING>0.13</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
 					<SIDE>right</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.18</TIMING>
+					<TIMING>0.26</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.27</TIMING>
+					<TIMING>0.39</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
@@ -548,27 +569,47 @@ static class ObstacleData
 
 
 
-			<!-- 6 Horizontal Lines (Medium) -->
+			<!-- 5 Horizontal Lines (Medium) -->
 
 			<CHUNK>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0</TIMING>
+					<TIMING>0.0</TIMING>
+					<X_TWEAK>100</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.05</TIMING>
+					<X_TWEAK>100</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
 					<SIDE>right</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.1</TIMING>
+					<X_TWEAK>100</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.15</TIMING>
+					<X_TWEAK>100</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.2</TIMING>
+					<X_TWEAK>100</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.15</TIMING>
+					<TIMING>0.25</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
@@ -592,8 +633,6 @@ static class ObstacleData
 					<ROTATION>40</ROTATION>
 					<X_TWEAK>-80</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.75</X_SCALE>
-					<Y_SCALE>1</Y_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -602,7 +641,6 @@ static class ObstacleData
 					<ROTATION>40</ROTATION>
 					<X_TWEAK>-120</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -611,7 +649,6 @@ static class ObstacleData
 					<ROTATION>40</ROTATION>
 					<X_TWEAK>-160</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -620,7 +657,6 @@ static class ObstacleData
 					<ROTATION>40</ROTATION>
 					<X_TWEAK>-200</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -629,7 +665,6 @@ static class ObstacleData
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
-
 
 			<!-- The Bitshift Medium -->
 			<CHUNK>
@@ -705,7 +740,7 @@ static class ObstacleData
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.096</TIMING>
+					<TIMING>0.0965</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
@@ -774,7 +809,7 @@ static class ObstacleData
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.0785</TIMING>
+					<TIMING>0.079</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
@@ -854,8 +889,6 @@ static class ObstacleData
 					<ROTATION>-30</ROTATION>
 					<X_TWEAK>-100</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.75</X_SCALE>
-					<Y_SCALE>1</Y_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -864,7 +897,6 @@ static class ObstacleData
 					<ROTATION>-30</ROTATION>
 					<X_TWEAK>-140</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -873,7 +905,6 @@ static class ObstacleData
 					<ROTATION>-30</ROTATION>
 					<X_TWEAK>-180</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -882,7 +913,6 @@ static class ObstacleData
 					<ROTATION>-30</ROTATION>
 					<X_TWEAK>-220</X_TWEAK>
 					<Y_TWEAK>0</Y_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -892,13 +922,9 @@ static class ObstacleData
 				</OBSTACLE>
 			</CHUNK>
 
-		</CHUNKS>"		
-	;
-	
-	public static string lesserMediumObstacles = 
-		@"<CHUNKS>
 			
-		</CHUNKS>"
+
+		</CHUNKS>"		
 	;
 	
 	public static string mediumObstacles = 
