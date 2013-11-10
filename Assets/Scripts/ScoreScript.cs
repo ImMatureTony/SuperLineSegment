@@ -4,9 +4,9 @@ using System.Collections;
 public class ScoreScript : MonoBehaviour
 {
 	static private tk2dTextMesh textMesh;
-	static private int score;
+	static private float score;
 
-	static public int Score
+	static public float Score
 	{
 		get
 		{
@@ -29,7 +29,9 @@ public class ScoreScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		textMesh.text = string.Format("Score: {0}", score);
+		if (score >= 0) {
+			textMesh.text = score.ToString("F2");
+		}
 		textMesh.Commit();
 	}
 }

@@ -2,10 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MainGameScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\MainGameScript.cs" Line="401" Column="3" />
-      <File FileName="Assets\Scripts\ObstacleData.cs" Line="62" Column="18" />
+      <File FileName="Assets\Plugins\iTween.cs" Line="6417" Column="1" />
+      <File FileName="Assets\Scripts\MainGameScript.cs" Line="113" Column="3" />
+      <File FileName="Assets\Scripts\ObstacleData.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SegmentScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SegmentTriggerScript.cs" Line="17" Column="3" />
+      <File FileName="Assets\Scripts\SegmentTriggerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Benchy\Tests\Manual\CS\CSTest.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ScoreScript.cs" Line="1" Column="1" />
       <File FileName="Assets\TK2DROOT\tk2dTileMap\Editor\tk2dTileMapUtility.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>

@@ -11,7 +11,16 @@ public class MainGameScript : MonoBehaviour
 	private SegmentScript segment;
 	
 	public GameObject titleText;
+	public GameObject titleTextTwo;
+	public GameObject titleTextThree;
+	public GameObject plotText;
 	public GameObject startText;
+	public GameObject scoreText;
+	
+	private bool haveHadAGameOver = false;
+	
+	private int currentStartTextMessageIndex = 0;
+	private string[] startTextMessages;
 	
 	//All the obstacle prefabs should be assigned here.
 	public Transform shapeOval;
@@ -94,6 +103,33 @@ public class MainGameScript : MonoBehaviour
 		instance = this;
 	}
 	
+	private void HideScoreText() {
+		iTween.MoveTo(scoreText, iTween.Hash("y", 1300, "easeType", iTween.EaseType.easeInOutExpo));	
+	}
+	
+	private void AnimateHideTitle() {
+		iTween.MoveBy(titleText.gameObject, iTween.Hash("y", 1000, "easeType", iTween.EaseType.easeInOutExpo, "time", 2));
+		iTween.MoveBy(titleTextTwo.gameObject, iTween.Hash("y", 1000, "easeType", iTween.EaseType.easeInOutExpo, "time", 2));
+		iTween.MoveBy(titleTextThree.gameObject, iTween.Hash("y", 1000, "easeType", iTween.EaseType.easeInOutExpo, "time", 2));
+		AnimatePlot();
+	}
+	
+	private void AnimatePlot() {
+		plotText.renderer.enabled = true;
+		iTween.MoveFrom(plotText.gameObject, iTween.Hash("y", -300, "easeType", iTween.EaseType.easeInOutExpo, "time", 3));
+	}
+	
+	private void AnimatePlotText() {
+		String text = "Engaging Startpoint";
+		int numDots = (int) (Time.fixedTime * 4 % 3) + 1;
+		while (numDots > 0) {
+			text += ".";
+			numDots--;	
+		}
+		plotText.GetComponent<tk2dTextMesh>().text = text;
+		plotText.GetComponent<tk2dTextMesh>().Commit();
+	}
+	
 	public void TransitionToState(GameState state) {
 		Debug.Log("transitioning to state: " + state);
 		
@@ -104,14 +140,26 @@ public class MainGameScript : MonoBehaviour
 		
 		startText.renderer.enabled = false;
 		titleText.renderer.enabled = false;
+		titleTextTwo.renderer.enabled = false;
+		titleTextThree.renderer.enabled = false;
+		plotText.renderer.enabled = false;
 		
 		switch(gameState) {
 			case GameState.PRE_INTRO:
 				// Pre-intro just exists to give things a chance to initialize and time themselves correctly.
+				titleText.renderer.enabled = true;
+				titleTextTwo.renderer.enabled = true;
+				titleTextThree.renderer.enabled = true;
+				iTween.MoveFrom(titleText.gameObject, iTween.Hash("x", -200, "easeType", iTween.EaseType.easeInOutExpo, "time", 3.5f));
+				iTween.MoveFrom(titleTextTwo.gameObject, iTween.Hash("x", 840, "easeType", iTween.EaseType.easeInOutExpo, "time", 5.5f));
+				iTween.MoveFrom(titleTextThree.gameObject, iTween.Hash("x", -200, "easeType", iTween.EaseType.easeInOutExpo, "time", 7.5f));
+				Invoke("AnimateHideTitle", 7.5f);
 				Invoke("TransitionToNextState", 1f);
 				break;
 			case GameState.INTRO:
 				titleText.renderer.enabled = true;
+				titleTextTwo.renderer.enabled = true;
+				titleTextThree.renderer.enabled = true;
 				audio.clip = sndIntro;
 				audio.Play();
 				// intro naturally times out and becomes waiting for game start
@@ -129,22 +177,32 @@ public class MainGameScript : MonoBehaviour
 				segment.FinishLiving();
 				break;
 			case GameState.GAME_OVER:
+				haveHadAGameOver = true;
+				currentStartTextMessageIndex = 0;
 				iTween.Stop();
+				iTween.Stop(gameCam.gameObject);
+				iTween.Stop(scoreText);
 				audio.clip = sndGameOver;
 				audio.loop = false;
 				audio.Play();
 				StopAllObstacles();
 				Invoke("RecedeObstacles", audio.clip.length / 3f);
 				Invoke("FinishSegmentDeath", audio.clip.length / 2f);
+				Invoke("HideScoreText", audio.clip.length / 2f);
 				Invoke("ResetLevel", audio.clip.length);
 				Invoke("TransitionToNextState", audio.clip.length);
 				segment.StartDeath();
 				break;
 			case GameState.GAME_START:
+				ScoreScript.Score = 0;
 				gameStartTime = Time.fixedTime;
 				audio.clip = sndStart;
 				audio.loop = false;
 				audio.Play();
+				
+				startText.GetComponent<tk2dTextMesh>().text = "WARNING:\nNO ENDPOINT FOUND\n";
+				startText.GetComponent<tk2dTextMesh>().Commit();
+			
 				// game start naturally times out and becomes in transit
 				Invoke("TransitionToNextState", audio.clip.length);		
 				ResetLevel();
@@ -183,6 +241,15 @@ public class MainGameScript : MonoBehaviour
 	
 	void Start () 
 	{	
+		startTextMessages = new string[6] {
+			"ERROR:\nSEGMENT AT FAULT!\n",
+			"ERROR:\nSEGMENT AT FAULT!\n",
+			"SPACE FOR COURAGE",
+			"SPACE FOR COURAGE",
+			"CTRL FOR CAUTION",
+			"CTRL FOR CAUTION"
+		};
+		
 		shapeStringToShape = new Dictionary<string, Transform> {
 	    	{ "EasyOval", shapeOval},
 			{ "EasyRect", shapeRect},
@@ -264,17 +331,23 @@ public class MainGameScript : MonoBehaviour
 					CancelInvoke("TransitionToNextState");
 					TransitionToState(GameState.GAME_START);
 				}
+				AnimatePlotText();
 				break;
 			case GameState.IN_TRANSIT:
 				// Check to see if accelerate button is being held down, and if so change vertical speed of things in some way that feels "right".
 				if (Input.GetAxis("Fire1") > 0) {
 					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", -100, "easeType", iTween.EaseType.linear));
+					iTween.MoveTo(scoreText, iTween.Hash("y", 1100 - 100, "easeType", iTween.EaseType.linear));
 				} else if (Input.GetAxis ("Fire2") > 0) {
 					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", 100, "easeType", iTween.EaseType.linear));
+					iTween.MoveTo(scoreText, iTween.Hash("y", 1100 + 100, "easeType", iTween.EaseType.linear));
 				} else {
 					iTween.MoveTo(gameCam.gameObject, iTween.Hash("y", 0, "easeType", iTween.EaseType.linear));
+					iTween.MoveTo(scoreText, iTween.Hash("y", 1100, "easeType", iTween.EaseType.linear));
 				}
 				
+				ScoreScript.Score = TimeSinceStart() / 30;
+			
 				HandleObstacles();	
 			
 				break;
@@ -284,6 +357,11 @@ public class MainGameScript : MonoBehaviour
 				if (startTextFlashTimer >= startTextFlashFrameCount) {
 					startText.renderer.enabled = !startText.renderer.enabled;
 					startTextFlashTimer -= startTextFlashFrameCount;
+					if (haveHadAGameOver && startText.renderer.enabled) {
+						startText.GetComponent<tk2dTextMesh>().text = startTextMessages[currentStartTextMessageIndex];
+						startText.GetComponent<tk2dTextMesh>().Commit();
+						currentStartTextMessageIndex = (currentStartTextMessageIndex + 1) % startTextMessages.Length;
+					}
 				}
 				startTextFlashTimer++;
 				// Check to see if accelerate button is being held down, and if so start the game.
@@ -298,6 +376,11 @@ public class MainGameScript : MonoBehaviour
 					startTextFlashTimer -= startTextFlashFrameCount;
 				}
 				startTextFlashTimer++;
+			
+				ScoreScript.Score = TimeSinceStart() / 30;
+			
+				iTween.MoveTo(scoreText, iTween.Hash("y", 1100, "easeType", iTween.EaseType.linear));
+			
 				HandleObstacles();
 				break;
 			default:
@@ -357,7 +440,7 @@ public class MainGameScript : MonoBehaviour
 		// only if the speed multiplier has changed do we reset the velocities on the obstacles.
 		if ((newObstacleDropSpeedMultiplier != obstacleDropSpeedMultiplier) || stationaryObstaclesSpawned) {
 			obstacleDropSpeedMultiplier = newObstacleDropSpeedMultiplier;
-			currentVelocity = -42 * gameSpeed * obstacleDropSpeedMultiplier;
+			currentVelocity = -50 * gameSpeed * obstacleDropSpeedMultiplier;
 			Vector3 obstacleVelocity = new Vector3(0, currentVelocity, 0);
 			foreach(Transform obstacle in activeObstacleList) {
 				obstacle.rigidbody.velocity = obstacleVelocity;
@@ -387,7 +470,7 @@ public class MainGameScript : MonoBehaviour
 		
 		// If we're out of obstacles to spawn, add a new chunk to the list, every 30 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
 		// up the difficulty every 30 seconds?
-		int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(2, Math.Ceiling(TimeSinceStart() / 5)));
+		int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(1, Math.Ceiling(TimeSinceStart() / 5)));
 		List<List<Obstacle>> chunksForSelectedDifficulty = null;
 		if (chunkDifficulty == 0) {
 			chunksForSelectedDifficulty = easyChunks;	
@@ -404,7 +487,7 @@ public class MainGameScript : MonoBehaviour
 		for(int i = 0; i < chunkToSpawn.Count; i++) {
 			Obstacle node = chunkToSpawn[i];
 			
-			node.timing = TimeSinceStart() / gameSpeed + node.timing;
+			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f;
 			
 			if (oughtToMirrorChunk) {
 				if (node.side == "left") {
@@ -454,7 +537,7 @@ public class MainGameScript : MonoBehaviour
 					obsTransform.Rotate(new Vector3(0, 180, 0));
 				}
 				
-				float worldScaleYTweak = currentVelocity * (timingCompareValue - obs.timing) * gameSpeed * 0.5f;
+				float worldScaleYTweak = currentVelocity * (timingCompareValue - obs.timing) * gameSpeed / obstacleDropSpeedMultiplier;
 				obsTransform.Translate(0, worldScaleYTweak, 0);
 				
 				obsTransform.Rotate(0, 0, -1 * obs.rotation);
