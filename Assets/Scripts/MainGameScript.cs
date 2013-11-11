@@ -14,6 +14,7 @@ public class MainGameScript : MonoBehaviour
 	public GameObject titleTextTwo;
 	public GameObject titleTextThree;
 	public GameObject plotText;
+	public GameObject greenText;
 	public GameObject startText;
 	public GameObject scoreText;
 	
@@ -68,7 +69,6 @@ public class MainGameScript : MonoBehaviour
 	private LinkedList<Transform> activeObstacleList = new LinkedList<Transform>();
 	
 	private List<List<Obstacle>> easyChunks = new List<List<Obstacle>>();
-	private List<List<Obstacle>> mediumChunks = new List<List<Obstacle>>();	
 	private List<List<Obstacle>> hardChunks = new List<List<Obstacle>>();
 	
 	public enum GameState
@@ -131,6 +131,11 @@ public class MainGameScript : MonoBehaviour
 		plotText.GetComponent<tk2dTextMesh>().Commit();
 	}
 	
+	private void ShowGreenText() {
+		plotText.renderer.enabled = false;
+		greenText.renderer.enabled = true;
+	}
+	
 	public void TransitionToState(GameState state) {
 		Debug.Log("transitioning to state: " + state);
 		
@@ -144,6 +149,7 @@ public class MainGameScript : MonoBehaviour
 		titleTextTwo.renderer.enabled = false;
 		titleTextThree.renderer.enabled = false;
 		plotText.renderer.enabled = false;
+		greenText.renderer.enabled = false;
 		
 		switch(gameState) {
 			case GameState.PRE_INTRO:
@@ -164,6 +170,7 @@ public class MainGameScript : MonoBehaviour
 				audio.clip = sndIntro;
 				audio.Play();
 				// intro naturally times out and becomes waiting for game start
+				Invoke ("ShowGreenText", audio.clip.length * 0.88f);
 				Invoke("TransitionToNextState", audio.clip.length);
 				break;
 			case GameState.WAITING_FOR_GAME_START:
@@ -202,7 +209,7 @@ public class MainGameScript : MonoBehaviour
 				audio.loop = false;
 				audio.Play();
 				
-				startText.GetComponent<tk2dTextMesh>().text = "WARNING:\nNO ENDPOINT FOUND\n";
+				startText.GetComponent<tk2dTextMesh>().text = "WARNING:\nNO ENDPOINT FOUND!\n";
 				startText.GetComponent<tk2dTextMesh>().Commit();
 			
 				// game start naturally times out and becomes in transit
@@ -243,7 +250,9 @@ public class MainGameScript : MonoBehaviour
 	
 	void Start () 
 	{	
-		startTextMessages = new string[6] {
+		startTextMessages = new string[8] {
+			"ERROR:\nSEGMENT AT FAULT!\n",
+			"ERROR:\nSEGMENT AT FAULT!\n",
 			"ERROR:\nSEGMENT AT FAULT!\n",
 			"ERROR:\nSEGMENT AT FAULT!\n",
 			"SPACE FOR COURAGE",
@@ -264,13 +273,10 @@ public class MainGameScript : MonoBehaviour
 		// read in obstacle data.
 		XmlDocument obstaclesEasyDoc = new XmlDocument();
 		obstaclesEasyDoc.LoadXml(ObstacleData.easyObstacles);
-		XmlDocument obstaclesMediumDoc = new XmlDocument();
-		obstaclesMediumDoc.LoadXml(ObstacleData.mediumObstacles);
 		XmlDocument obstaclesHardDoc = new XmlDocument();
 		obstaclesHardDoc.LoadXml(ObstacleData.hardObstacles);
 		
 		FillChunkListFromXml(easyChunks, ObstacleData.easyObstacles);
-		FillChunkListFromXml(mediumChunks, ObstacleData.mediumObstacles);
 		FillChunkListFromXml(hardChunks, ObstacleData.hardObstacles);
 		
 		TransitionToState(GameState.PRE_INTRO);
@@ -340,12 +346,6 @@ public class MainGameScript : MonoBehaviour
 	{
 		switch(gameState) {
 			case GameState.INTRO:
-				// Check to see if accelerate button is being held down, and if so start the game early.
-				if (Input.GetAxis("Fire1") > 0)
-				{
-					CancelInvoke("TransitionToNextState");
-					TransitionToState(GameState.GAME_START);
-				}
 				AnimatePlotText();
 				break;
 			case GameState.IN_TRANSIT:
@@ -485,13 +485,16 @@ public class MainGameScript : MonoBehaviour
 		
 		// If we're out of obstacles to spawn, add a new chunk to the list, every 30 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
 		// up the difficulty every 30 seconds?
-		int chunkDifficulty = UnityEngine.Random.Range(0, (int) Math.Min(1, Math.Ceiling(TimeSinceStart() / 5)));
+		int chunkDifficulty = 0;
+		if (ScoreScript.Score >= 1) {
+			if (UnityEngine.Random.Range (0, 20) <= 7) {
+				chunkDifficulty = 1;
+			}
+		}
 		List<List<Obstacle>> chunksForSelectedDifficulty = null;
 		if (chunkDifficulty == 0) {
 			chunksForSelectedDifficulty = easyChunks;	
 		} else if (chunkDifficulty == 1) {
-			chunksForSelectedDifficulty = mediumChunks;	
-		} else if (chunkDifficulty == 2) {
 			chunksForSelectedDifficulty = hardChunks;	
 		}
 		
@@ -500,7 +503,7 @@ public class MainGameScript : MonoBehaviour
 		for(int i = 0; i < chunkToSpawn.Count; i++) {
 			Obstacle node = chunkToSpawn[i];
 			
-			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f + 1.2f * (1 - obstacleDropSpeedMultiplier) * Time.fixedDeltaTime / gameSpeed;
+			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f + 1.22f * (1 - obstacleDropSpeedMultiplier) * Time.fixedDeltaTime / gameSpeed;
 			
 			if (oughtToMirrorChunk) {
 				if (node.side == "left") {
@@ -560,7 +563,7 @@ public class MainGameScript : MonoBehaviour
 				}
 				activeObstacleList.AddLast(obsTransform);
 
-				int tweenX = 300;
+				int tweenX = 475;
 				obsTransform.Translate(-1 * tweenX, 0, 0);
 				iTween.MoveBy(obsTransform.gameObject, iTween.Hash("x", tweenX, "easeType", iTween.EaseType.easeInOutExpo, "loopType", "none"));
 				
@@ -572,7 +575,7 @@ public class MainGameScript : MonoBehaviour
 	
 	private void RecedeObstacles() {
 		foreach(Transform obstacle in activeObstacleList) {
-			iTween.MoveBy(obstacle.gameObject, iTween.Hash("x", -320, "easeType", iTween.EaseType.easeInOutExpo, "loopType", "none", "delay", UnityEngine.Random.Range(0F, 1F)));
+			iTween.MoveBy(obstacle.gameObject, iTween.Hash("x", -475, "easeType", iTween.EaseType.easeInOutExpo, "loopType", "none", "delay", UnityEngine.Random.Range(0F, 1F)));
 		}
 	}
 	
