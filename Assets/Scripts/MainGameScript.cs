@@ -186,6 +186,7 @@ public class MainGameScript : MonoBehaviour
 				break;
 			case GameState.GAME_OVER:
 				Application.ExternalCall("kongregate.stats.submit", "high_score", (int) (ScoreScript.Score * 100));
+				segment.transform.Translate(0, 0.75f * Time.fixedDeltaTime * currentVelocity, 0);
 				haveHadAGameOver = true;
 				currentStartTextMessageIndex = 0;
 				iTween.Stop();
@@ -209,7 +210,7 @@ public class MainGameScript : MonoBehaviour
 				audio.loop = false;
 				audio.Play();
 				
-				startText.GetComponent<tk2dTextMesh>().text = "WARNING:\nNO ENDPOINT FOUND!\n";
+				startText.GetComponent<tk2dTextMesh>().text = "WARNING:\nNo Endpoint Found!\n";
 				startText.GetComponent<tk2dTextMesh>().Commit();
 			
 				// game start naturally times out and becomes in transit
@@ -251,14 +252,14 @@ public class MainGameScript : MonoBehaviour
 	void Start () 
 	{	
 		startTextMessages = new string[8] {
-			"ERROR:\nSEGMENT AT FAULT!\n",
-			"ERROR:\nSEGMENT AT FAULT!\n",
-			"ERROR:\nSEGMENT AT FAULT!\n",
-			"ERROR:\nSEGMENT AT FAULT!\n",
-			"SPACE FOR COURAGE",
-			"SPACE FOR COURAGE",
-			"CTRL FOR CAUTION",
-			"CTRL FOR CAUTION"
+			"ERROR:\nSegment at Fault!\n",
+			"ERROR:\nSegment at Fault!\n",
+			"ERROR:\nSegment at Fault!\n",
+			"ERROR:\nSegment at Fault!\n",
+			"SPACE for COURAGE",
+			"SPACE for COURAGE",
+			"CTRL for CAUTION",
+			"CTRL for CAUTION"
 		};
 		
 		shapeStringToShape = new Dictionary<string, Transform> {
@@ -487,7 +488,7 @@ public class MainGameScript : MonoBehaviour
 		// up the difficulty every 30 seconds?
 		int chunkDifficulty = 0;
 		if (ScoreScript.Score >= 1) {
-			if (UnityEngine.Random.Range (0, 20) <= 7) {
+			if (UnityEngine.Random.Range (0, 18) <= 7) {
 				chunkDifficulty = 1;
 			}
 		}
@@ -503,7 +504,13 @@ public class MainGameScript : MonoBehaviour
 		for(int i = 0; i < chunkToSpawn.Count; i++) {
 			Obstacle node = chunkToSpawn[i];
 			
-			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f + 1.22f * (1 - obstacleDropSpeedMultiplier) * Time.fixedDeltaTime / gameSpeed;
+			float timingTweak = -1.3f * obstacleDropSpeedMultiplier * Time.fixedDeltaTime / gameSpeed;
+			
+			//if (TimeSinceStart() < 5) timingTweak = 0;
+			
+			//Debug.Log(timingTweak);
+			
+			node.timing = TimeSinceStart() / gameSpeed + node.timing * 0.8f + timingTweak;
 			
 			if (oughtToMirrorChunk) {
 				if (node.side == "left") {
