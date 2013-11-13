@@ -505,8 +505,13 @@ static class ObstacleData
 				</OBSTACLE>
 			</CHUNK>
 
-			
+		</CHUNKS>"		
+	;
 
+	public static String hardObstacles =
+		@"<CHUNKS>
+
+			
 
 			<!-- Line Cloud (EASY) -->
 			<CHUNK>
@@ -576,7 +581,7 @@ static class ObstacleData
 					<X_TWEAK>200</X_TWEAK>
 				</OBSTACLE>
 			</CHUNK>
-
+			
 
 			<!-- Easy Slalom (EASY) -->
 			<CHUNK>
@@ -681,14 +686,7 @@ static class ObstacleData
 					<SIDE>left</SIDE>
 					<TIMING>0.256</TIMING>
 				</OBSTACLE>
-			</CHUNK>			
-
-		</CHUNKS>"		
-	;
-
-	public static String hardObstacles =
-		@"<CHUNKS>
-
+			</CHUNK>
 
 			<!-- Bent Apparatus (HARD) -->
 			<CHUNK>
