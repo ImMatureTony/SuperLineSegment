@@ -22,6 +22,7 @@ public class MainGameScript : MonoBehaviour
 	private float difficultyOffset = 1f;
 	
 	private bool haveHadAGameOver = false;
+	private bool shouldShakeCamera = false;
 	
 	private int currentStartTextMessageIndex = 0;
 	private int currentStartedTextMessageIndex = 0;
@@ -52,6 +53,7 @@ public class MainGameScript : MonoBehaviour
 	
 	public AudioClip sndGameOver;
 	public AudioClip sndPoundingMotive;
+	public AudioClip sndPoundingMotiveSlow;
 	public AudioClip sndIntro;
 	public AudioClip sndStart;
 	
@@ -195,12 +197,16 @@ public class MainGameScript : MonoBehaviour
 				haveHadAGameOver = true;
 				currentStartTextMessageIndex = 0;
 				iTween.Stop();
+				iTween.Stop (audio.gameObject);
+			
 				//iTween.Stop(gameCam.gameObject);
 				//iTween.Stop(scoreText);
 				audio.clip = sndGameOver;
 				audio.loop = false;
 				audio.Play();
 				StopAllObstacles();
+				ShakeCamera();
+				Invoke("StopShakingCamera", audio.clip.length / 2f);
 				Invoke("RecedeObstacles", audio.clip.length / 3f);
 				Invoke("FinishSegmentDeath", audio.clip.length / 2f);
 				Invoke("HideScoreText", audio.clip.length / 2f);
@@ -225,6 +231,14 @@ public class MainGameScript : MonoBehaviour
 			default:
             	break;
 		}
+	}
+	
+	void ShakeCamera() {
+		shouldShakeCamera = true;
+	}
+	
+	void StopShakingCamera() {
+		shouldShakeCamera = false;	
 	}
 	
 	void FinishSegmentDeath() {
@@ -361,12 +375,18 @@ public class MainGameScript : MonoBehaviour
 			difficultyOffset = 0f;
 		}
 		
+		if (shouldShakeCamera == true) {
+    	  	gameCam.transform.position = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), -5f);	
+		} else {
+			gameCam.transform.position = new Vector3(0, 0, -10f);	
+		}
+		
 		switch(gameState) {
 			case GameState.INTRO:
-				/*if (Input.GetAxis ("Fire1") > 0) {
+				/**/if (Input.GetAxis ("Fire1") > 0) {
 					CancelInvoke();
 					TransitionToState(GameState.GAME_START);
-				}*/
+				}/**/
 				AnimatePlotText();
 				break;
 			case GameState.IN_TRANSIT:
@@ -463,10 +483,9 @@ public class MainGameScript : MonoBehaviour
 		{
 			newObstacleDropSpeedMultiplier = 2f;
 			accelerateTime += Time.fixedDeltaTime;
-		} else
-		{
+		} else {
 			newObstacleDropSpeedMultiplier = 0.5f;
-			accelerateTime -= Time.fixedDeltaTime / 2f;
+			accelerateTime -= Time.fixedDeltaTime * 0.5f;
 		}
 		
 		// only if the speed multiplier has changed do we reset the velocities on the obstacles.
