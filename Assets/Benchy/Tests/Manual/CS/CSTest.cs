@@ -28,7 +28,7 @@ public class CSTest : MonoBehaviour
 	// Just another example of how to mix and match manually profiled sections with auto sections
 	void CalculateStuff () 
 	{
-		Benchy.Begin ();
+		//Benchy.Begin ();
 		int nextNumber = Random.Range (0, 1000000);
 		if (IsPrime (nextNumber)) {
 			Benchy.Begin ("Checking if prime already found");
@@ -42,16 +42,16 @@ public class CSTest : MonoBehaviour
 		int sumOfAllPrimes = primeNumbers.Sum (x => x.Key);
 		sumOfAllPrimes += 1;
 		CallSomeOtherMethod ();
-		Benchy.End ();
+		//Benchy.End ();
 	}
 	
 	void CallSomeOtherMethod ()
 	{
-		Benchy.Begin ();
-		Benchy.Begin ("Checking something on method");
+		//Benchy.Begin ();
+		//Benchy.Begin ("Checking something on method");
 		// Some code could possibly have been here
-		Benchy.End ("Checking something on method");
-		Benchy.End ();
+		//Benchy.End ("Checking something on method");
+		//Benchy.End ();
 	}
 	
 	static bool IsPrime (int number)
@@ -79,10 +79,10 @@ public class CSTest : MonoBehaviour
 	[NeverProfileMethod]
 	void Render ()
 	{
-	 	Benchy.Begin ();
-		Benchy.Begin ("Find main camera");
+	 //	Benchy.Begin ();
+	//	Benchy.Begin ("Find main camera");
 		GameObject mainCamera = FindMainCamera ();
-		Benchy.End ("Find main camera");
+		//Benchy.End ("Find main camera");
 	
 		if (mainCamera) {
 			ParticleSystem particleSystem = mainCamera.GetComponent<ParticleSystem> ();
@@ -100,7 +100,7 @@ public class CSTest : MonoBehaviour
 				Benchy.End ("Main particle system code");
 			}
 		}
-		Benchy.End ();
+		//Benchy.End ();
 	}
 	
 	GameObject FindMainCamera ()

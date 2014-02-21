@@ -7,6 +7,66 @@ static class ObstacleData
 	public static String easyObstacles =
 		@"<CHUNKS>
 
+			<!-- 5 Horizontal Lines (EASY) -->
+			<CHUNK>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.13</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.26</TIMING>
+					<X_TWEAK>123</X_TWEAK>
+					<X_SCALE>0.5</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<TIMING>0.36</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+			</CHUNK>
+
+			<!-- 5 Horizontal Lines (RUN IT) -->
+			<CHUNK>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0</TIMING>
+					<X_TWEAK>375</X_TWEAK>
+					<X_SCALE>0.4</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.2</TIMING>
+					<X_TWEAK>375</X_TWEAK>
+					<X_SCALE>0.4</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.4</TIMING>
+					<X_TWEAK>375</X_TWEAK>
+					<X_SCALE>0.4</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<TIMING>0.56</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+			</CHUNK>
+
 			<!-- Easiest Slalom (EASY) -->
 			<CHUNK>
 				<OBSTACLE>
@@ -106,7 +166,6 @@ static class ObstacleData
 				</OBSTACLE>
 			</CHUNK>
 
-
 			<!-- The Wall Easy (EASY) -->
 			<CHUNK>
 				<OBSTACLE>
@@ -135,126 +194,6 @@ static class ObstacleData
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 			</CHUNK>
-
-			<!-- The Wall Medium (EASY) -->
-			<CHUNK>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0175</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.035</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0525</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.07</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0875</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.14</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-			</CHUNK>
-
-
-			<!-- 5 Horizontal Lines (EASY) -->
-
-			<CHUNK>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0</TIMING>
-					<X_TWEAK>123</X_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.13</TIMING>
-					<X_TWEAK>123</X_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.26</TIMING>
-					<X_TWEAK>123</X_TWEAK>
-					<X_SCALE>0.5</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.36</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-			</CHUNK>
-
-
-
-			<!-- 5 Horizontal Lines (HARD) -->
-
-			<CHUNK>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0</TIMING>
-					<X_TWEAK>150</X_TWEAK>
-					<X_SCALE>0.25</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.05</TIMING>
-					<X_TWEAK>150</X_TWEAK>
-					<X_SCALE>0.25</X_SCALE>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.1</TIMING>
-					<X_TWEAK>150</X_TWEAK>
-					<X_SCALE>0.25</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.15</TIMING>
-					<X_TWEAK>150</X_TWEAK>
-					<X_SCALE>0.25</X_SCALE>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.2</TIMING>
-					<X_TWEAK>150</X_TWEAK>
-					<X_SCALE>0.25</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.25</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-			</CHUNK>
-
-
 
 			<!-- 45 degree tri-line inverted (EASY) -->
 
@@ -693,10 +632,10 @@ static class ObstacleData
 
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.12</TIMING>
-					<Y_SCALE>10</Y_SCALE>
+					<TIMING>0.17</TIMING>
+					<Y_SCALE>1</Y_SCALE>
 					<X_SCALE>0.1</X_SCALE>
-					<X_TWEAK>100</X_TWEAK>
+					<X_TWEAK>200</X_TWEAK>
 					<SIDE>right</SIDE>
 				</OBSTACLE>
 
@@ -879,37 +818,6 @@ static class ObstacleData
 				</OBSTACLE>
 			</CHUNK>
 
-
-			<!-- 5 Horizontal Lines (RUN IT) -->
-			<CHUNK>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0</TIMING>
-					<X_TWEAK>375</X_TWEAK>
-					<X_SCALE>0.4</X_SCALE>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.2</TIMING>
-					<X_TWEAK>375</X_TWEAK>
-					<X_SCALE>0.4</X_SCALE>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.4</TIMING>
-					<X_TWEAK>375</X_TWEAK>
-					<X_SCALE>0.4</X_SCALE>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EndPiece</SHAPE>
-					<TIMING>0.56</TIMING>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
-			</CHUNK>
-
 			<!-- The Wall Hard (HARD) -->
 			<CHUNK>
 				<OBSTACLE>
@@ -1000,6 +908,7 @@ static class ObstacleData
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.1225</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -1029,11 +938,13 @@ static class ObstacleData
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.21</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.2275</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -1059,11 +970,13 @@ static class ObstacleData
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.315</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.3325</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -1094,6 +1007,7 @@ static class ObstacleData
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.42</TIMING>
+					<X_TWEAK>-180</X_TWEAK>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
 				<OBSTACLE>
@@ -1250,15 +1164,9 @@ static class ObstacleData
 			<CHUNK>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0</TIMING>
-					<SIDE>left</SIDE>
-					<X_TWEAK>-50</X_TWEAK>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.0175</TIMING>
 					<SIDE>left</SIDE>
-					<X_TWEAK>-100</X_TWEAK>
+					<X_TWEAK>-80</X_TWEAK>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
@@ -1431,29 +1339,17 @@ static class ObstacleData
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<X_TWEAK>-100</X_TWEAK>
+					<X_TWEAK>-80</X_TWEAK>
 					<TIMING>0.525</TIMING>
 					<SIDE>left</SIDE>
 				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.5425</TIMING>
-					<X_TWEAK>-50</X_TWEAK>
-					<SIDE>left</SIDE>
-				</OBSTACLE>
 
 
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.0</TIMING>
-					<SIDE>right</SIDE>
-					<X_TWEAK>-50</X_TWEAK>
-				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
 					<TIMING>0.0175</TIMING>
 					<SIDE>right</SIDE>
-					<X_TWEAK>-100</X_TWEAK>
+					<X_TWEAK>-80</X_TWEAK>
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
@@ -1626,14 +1522,8 @@ static class ObstacleData
 				</OBSTACLE>
 				<OBSTACLE>
 					<SHAPE>EasyRect</SHAPE>
-					<X_TWEAK>-100</X_TWEAK>
+					<X_TWEAK>-80</X_TWEAK>
 					<TIMING>0.525</TIMING>
-					<SIDE>right</SIDE>
-				</OBSTACLE>
-				<OBSTACLE>
-					<SHAPE>EasyRect</SHAPE>
-					<TIMING>0.5425</TIMING>
-					<X_TWEAK>-50</X_TWEAK>
 					<SIDE>right</SIDE>
 				</OBSTACLE>
 	
@@ -1644,6 +1534,90 @@ static class ObstacleData
 				</OBSTACLE>
 			</CHUNK>
 
+
+			<!-- The Wall Medium (EASY) -->
+			<CHUNK>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.0</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.0175</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.035</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.0525</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.07</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.0875</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<TIMING>0.14</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+			</CHUNK>
+
+			<!-- 5 Horizontal Lines (HARD) -->
+
+			<CHUNK>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.0</TIMING>
+					<X_TWEAK>150</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.05</TIMING>
+					<X_TWEAK>150</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.1</TIMING>
+					<X_TWEAK>150</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.15</TIMING>
+					<X_TWEAK>150</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>right</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EasyRect</SHAPE>
+					<TIMING>0.2</TIMING>
+					<X_TWEAK>150</X_TWEAK>
+					<X_SCALE>0.25</X_SCALE>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+				<OBSTACLE>
+					<SHAPE>EndPiece</SHAPE>
+					<TIMING>0.25</TIMING>
+					<SIDE>left</SIDE>
+				</OBSTACLE>
+			</CHUNK>
 
 		</CHUNKS>"
 	;

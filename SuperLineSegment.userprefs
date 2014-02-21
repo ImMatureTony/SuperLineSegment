@@ -1,6 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MainGameScript.cs">
+    <Files>
+      <File FileName="Assets\Scripts\ColorCycler.cs" Line="51" Column="27" />
+      <File FileName="Assets\Scripts\MainGameScript.cs" Line="198" Column="21" />
+      <File FileName="Assets\Scripts\SegmentScript.cs" Line="84" Column="28" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -34,4 +34,8 @@ public class ScoreScript : MonoBehaviour
 		}
 		textMesh.Commit();
 	}
+	
+	public float GetScore() {
+		return score;	
+	}
 }

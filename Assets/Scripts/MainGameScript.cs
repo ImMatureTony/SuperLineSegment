@@ -18,6 +18,10 @@ public class MainGameScript : MonoBehaviour
 	public GameObject startText;
 	public GameObject scoreText;
 	
+	private bool _alreadyPlayed = false;
+	
+	private Color _obstacleColor = Color.white;
+	
 	// don't send obstacles for 3 seconds
 	private float difficultyOffset = 1f;
 	
@@ -109,6 +113,7 @@ public class MainGameScript : MonoBehaviour
 	void Awake()
 	{
 		instance = this;
+		Application.targetFrameRate = 60;
 	}
 	
 	private void HideScoreText() {
@@ -188,8 +193,15 @@ public class MainGameScript : MonoBehaviour
 			case GameState.IN_TRANSIT:
 				audio.clip = sndPoundingMotive;
 				audio.loop = true;
+				if (_alreadyPlayed) {
+					if (UnityEngine.Random.Range(0, 4) == 0) {
+						audio.time = 0f;
+					}
+				}
+				audio.time = 0f;
 				audio.Play();
 				segment.FinishLiving();
+				_alreadyPlayed = true;
 				break;
 			case GameState.GAME_OVER:
 				Application.ExternalCall("kongregate.stats.submit", "high_score", (int) (ScoreScript.Score * 100));
@@ -215,6 +227,7 @@ public class MainGameScript : MonoBehaviour
 				segment.StartDeath();
 				break;
 			case GameState.GAME_START:
+				//gameCam.transform.position = new Vector3(0, 0, -10f);
 				ScoreScript.Score = 0;
 				gameStartTime = Time.fixedTime;
 				audio.clip = sndStart;
@@ -224,7 +237,7 @@ public class MainGameScript : MonoBehaviour
 				currentStartedTextMessageIndex = 0;
 			
 				// game start naturally times out and becomes in transit
-				Invoke("TransitionToNextState", audio.clip.length);		
+				Invoke("TransitionToNextState", audio.clip.length);
 				ResetLevel();
 				segment.StartLiving();
 				break;
@@ -269,17 +282,19 @@ public class MainGameScript : MonoBehaviour
 	
 	void Start () 
 	{	
-		startTextMessages = new string[4] {
+		startTextMessages = new string[6] {
 			"ERROR:\nSegment at Fault!\n",
 			"ERROR:\nSegment at Fault!\n",
 			"SPACE for COURAGE\n",
-			"SPACE for COURAGE\n"
+			"SPACE for COURAGE\n",
+			"CTRL for CAUTION\n",
+			"CTRL for CAUTION\n"
 		};
 		
 		startedTextMessages = new string[3] {
 			"WARNING:\nNo Endpoint Found!\n",
 			"SPACE for COURAGE\n",
-			"SPACE for COURAGE\n"	
+			"CTRL for CAUTION\n"
 		};
 		
 		shapeStringToShape = new Dictionary<string, Transform> {
@@ -364,21 +379,15 @@ public class MainGameScript : MonoBehaviour
 	}
 	
 	void UpdateGameScore() {
-		ScoreScript.Score = TimeSinceStart() / gameSpeed / 4;
+		ScoreScript.Score = Mathf.Max(0, (TimeSinceStart() - 1.51f) * 0.08323f);
 	}
 	
 	void FixedUpdate()
 	{
-		if (ScoreScript.Score < 2f) {
-			difficultyOffset = 1f;	
-		} else {
-			difficultyOffset = 0f;
-		}
+		difficultyOffset = Mathf.Max(0.5f, 1f - Mathf.Max(0, Mathf.Round(ScoreScript.Score - 2f)) / 12f);
 		
 		if (shouldShakeCamera == true) {
     	  	gameCam.transform.position = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), -5f);	
-		} else {
-			gameCam.transform.position = new Vector3(0, 0, -10f);	
 		}
 		
 		switch(gameState) {
@@ -479,13 +488,21 @@ public class MainGameScript : MonoBehaviour
 	private void HandleObstacleDropping() {
 		//Benchy.Begin();
 		float newObstacleDropSpeedMultiplier = 1f;
-		if (Input.GetAxis("Fire1") > 0 && gameState.Equals(GameState.IN_TRANSIT))
+		if (false)//Input.GetAxis("Fire1") > 0 && gameState.Equals(GameState.IN_TRANSIT))
 		{
+			//iTween.ScaleTo(segment.gameObject, iTween.Hash("y", 0.5f, "easeType", iTween.EaseType.easeOutElastic));
 			newObstacleDropSpeedMultiplier = 2f;
 			accelerateTime += Time.fixedDeltaTime;
+			//segment.audio.loop = true;
+			//if (!segment.audio.isPlaying) {
+			//	segment.audio.Play();
+			//	segment.audio.pitch = UnityEngine.Random.Range(0f, 10f);
+			//}
 		} else {
-			newObstacleDropSpeedMultiplier = 0.5f;
-			accelerateTime -= Time.fixedDeltaTime * 0.5f;
+			//iTween.ScaleTo(segment.gameObject, iTween.Hash("y", 2, "easeType", iTween.EaseType.easeOutElastic));
+			newObstacleDropSpeedMultiplier = 0.75f;
+			accelerateTime -= Time.fixedDeltaTime * 0.25f;
+			//segment.audio.Stop();
 		}
 		
 		// only if the speed multiplier has changed do we reset the velocities on the obstacles.
@@ -522,7 +539,7 @@ public class MainGameScript : MonoBehaviour
 		// If we're out of obstacles to spawn, add a new chunk to the list, every 30 seconds, a new difficulty of chunk pieces is unlocked as a possibility.
 		// up the difficulty every 30 seconds?
 		int chunkDifficulty = 0;
-		if (ScoreScript.Score >= 1) {
+		if (ScoreScript.Score >= 4) {
 			if (UnityEngine.Random.Range (0, 18) <= 9) {
 				chunkDifficulty = 1;
 			}
@@ -590,6 +607,9 @@ public class MainGameScript : MonoBehaviour
 			if (!obs.shape.Equals("EndPiece")) {
 				Vector3 spawnPos = new Vector3(-1, 1200, 0);
 				Transform obsTransform = (Transform) Instantiate(shapeStringToShape[obs.shape], spawnPos, Quaternion.identity);
+				
+				obsTransform.gameObject.GetComponent<tk2dSprite>().color = _obstacleColor;
+				
 				if (obs.side.Equals("right")) {
 					obsTransform.Translate(new Vector3(642, 0, 0));
 					obsTransform.Rotate(new Vector3(0, 180, 0));
@@ -638,5 +658,13 @@ public class MainGameScript : MonoBehaviour
 	public void RegisterSegment(SegmentScript seg)
 	{
 		segment = seg;
+	}
+	
+	public void ShiftObstaclesToColor(Color color) {
+		_obstacleColor = color;
+		
+		foreach(Transform obstacle in activeObstacleList) {
+			obstacle.GetComponent<tk2dSprite>().color = color;
+		}
 	}
 }

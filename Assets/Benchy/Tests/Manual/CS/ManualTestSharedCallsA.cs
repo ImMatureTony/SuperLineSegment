@@ -10,25 +10,25 @@ public class ManualTestSharedCallsA : MonoBehaviour {
 	int counter = 0;
 	[NeverProfileMethod]
 	void Update () {
-		Benchy.Begin();
+	//	Benchy.Begin();
 		if (counter > 100)
 		{
 			counter = 0;
 			ThisIsASharedMethod();
 		}
 		counter++; 
-		Benchy.End();
+	//	Benchy.End();
 	}
 	
 	[NeverProfileMethod]
 	public void ThisIsASharedMethod()
 	{
-		Benchy.Begin();
+	//	Benchy.Begin();
 		// A method that's as about as useful as the rest of the class :)
 		float x = 3*2.3938384f;
 		double y = Mathf.Sqrt(x);
 		y = y + .99f;
-		Benchy.End();
+	//	Benchy.End();
 	}
 	
 }

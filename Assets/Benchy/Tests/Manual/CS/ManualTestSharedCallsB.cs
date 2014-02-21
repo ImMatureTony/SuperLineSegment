@@ -9,9 +9,9 @@ public class ManualTestSharedCallsB : MonoBehaviour {
 	
 	[NeverProfileMethod]
 	void Update () {
-		Benchy.Begin();
+		//Benchy.Begin();
 		ManualTestSharedCallsA classA = gameObject.GetComponent<ManualTestSharedCallsA>();
 		classA.ThisIsASharedMethod();
-		Benchy.End();
+		//Benchy.End();
 	}
 }
